@@ -34,7 +34,7 @@ describe('custom reduce', () => {
   });
 
   test('throws TypeError on empty array without initial value', () => {
-    expect(() => [].reduce2((acc, v) => acc + v)).toThrow(TypeError);
+    expect(() => callReduce([], (a, b) => a + b)).toThrow(TypeError);
   });
 
   test('passes correct arguments to callback', () => {
