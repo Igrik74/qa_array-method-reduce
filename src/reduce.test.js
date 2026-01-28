@@ -34,7 +34,7 @@ describe('custom reduce', () => {
   });
 
   test('throws TypeError on empty array without initial value', () => {
-    expect(callReduce([], (acc, v) => acc + v)).toBeUndefined();
+    expect(() => [].reduce2((acc, v) => acc + v)).toThrow(TypeError);
   });
 
   test('passes correct arguments to callback', () => {
@@ -56,19 +56,14 @@ describe('custom reduce', () => {
     expect(result).toBe(6);
   });
 
-  test('skips holes in sparse arr(your implementation DOES NOT skip)', () => {
-    const arr = [1, 3];
+  test('skips empty slots in a sparse array', () => {
+  // eslint-disable-next-line no-sparse-arrays
+    const arr = [1, , 3]; // A sparse array
+    const callback = jest.fn((sum, el) => sum + el);
+    const result = callReduce(arr, callback, 0);
 
-    arr[1] = undefined;
-    delete arr[1];
-
-    const mock = jest.fn((acc, v) => acc + v);
-
-    const result = callReduce(arr, mock, 0);
-
-    // Your implementation DOES call callback for missing elements
-    expect(mock).toHaveBeenCalledTimes(2);
-    expect(result).toBeNaN(); // because undefined is passed
+    expect(callback).toHaveBeenCalledTimes(2); // Only indices 0 and 2 exist
+    expect(result).toBe(4); // 0 + 1 + 3
   });
 
   test('single-element arr without initial value returns that element', () => {
